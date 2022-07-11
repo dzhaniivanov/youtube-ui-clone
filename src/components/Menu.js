@@ -15,15 +15,17 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import { AccountCircleOutlined } from "@mui/icons-material";
+import SettingsBrightnessOutlinedIcon from "@mui/icons-material/SettingsBrightnessOutlined";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   flex: 1;
-  background-color: #202020;
-  height: 100vh;
-  color: white;
+  background-color: ${({ theme }) => theme.bgLighter};
+  /* height: 100vh; */
+  color: ${({ theme }) => theme.text};
   font-size: 14px;
-  position:sticky;
-  top:0;
+  position: sticky;
+  top: 0;
 `;
 
 const Wrapper = styled.div`
@@ -48,11 +50,15 @@ const Item = styled.div`
   gap: 20px;
   cursor: pointer;
   padding: 7.5px 0px;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.soft};
+  }
 `;
 
 const Hr = styled.hr`
   margin: 15px 0px;
-  border: 0.5px solid #373737;
+  border: 0.5px solid ${({ theme }) => theme.soft}; ;
 `;
 
 const Login = styled.div``;
@@ -71,14 +77,23 @@ const Button = styled.button`
   gap: 5px;
 `;
 
-const Menu = () => {
+const Title = styled.h2`
+  font-size: 14px;
+  font-weight: 500;
+  color: "#aaaaaa";
+  margin-bottom: 20px;
+`;
+
+const Menu = ({ darkMode, setDarkMode }) => {
   return (
     <Container>
       <Wrapper>
-        <Logo>
-          <Img src={VideoTube} />
-          VideoTube
-        </Logo>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+          <Logo>
+            <Img src={VideoTube} />
+            VideoTube
+          </Logo>
+        </Link>
         <Item>
           <HomeIcon />
           Home
@@ -101,10 +116,16 @@ const Menu = () => {
           History
         </Item>
         <Hr />
-        <Login>Sign in to like videos, comment and subscribe.</Login>
-        <Button>
-          <AccountCircleOutlined /> SIGN IN
-        </Button>
+        <Login>
+          Sign in to like videos, comment and subscribe.
+          <Link to="signin" style={{ textDecoration: "none" }}>
+            <Button>
+              <AccountCircleOutlined /> SIGN IN
+            </Button>
+          </Link>
+        </Login>
+        <Hr />
+        <Title>BEST OF VIDEOTUBE</Title>
         <Item>
           <LibraryMusicOutlinedIcon />
           Music
@@ -141,6 +162,10 @@ const Menu = () => {
         <Item>
           <HelpOutlineOutlinedIcon />
           Help
+        </Item>
+        <Item onClick={() => setDarkMode(!darkMode)}>
+          <SettingsBrightnessOutlinedIcon />
+          {darkMode ? "Light" : "Dark"} Mode
         </Item>
       </Wrapper>
     </Container>
