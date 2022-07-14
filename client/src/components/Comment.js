@@ -17,7 +17,6 @@ const Details = styled.div`
   flex-direction: column;
   gap: 10px;
   color: ${({ theme }) => theme.text};
-
 `;
 
 const Name = styled.span`
@@ -31,7 +30,7 @@ const Date = styled.span`
   margin-left: 5px;
 `;
 const Text = styled.span`
-    font-size: 14px;
+  font-size: 14px;
 `;
 
 const Comment = () => {

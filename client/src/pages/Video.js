@@ -84,7 +84,6 @@ const ChannelDetail = styled.div`
   display: flex;
   flex-direction: column;
   color: ${({ theme }) => theme.text};
-  font-size: 12px;
 `;
 
 const ChannelName = styled.span`
@@ -117,7 +116,7 @@ const Video = () => {
             src="https://www.youtube.com/embed/k3Vfj-e1Ma4"
             title="YouTube video player"
             frameborder="0"
-            allow="acceleroemter; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           ></iframe>
         </VideoWrapper>
@@ -178,7 +177,7 @@ const Video = () => {
         <Card type="sm"/>
         <Card type="sm"/>
         <Card type="sm"/>
-        <Card type="sm"/> 0
+        <Card type="sm"/> 
       </Recommendation>
     </Container>
   );
