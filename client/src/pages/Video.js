@@ -9,8 +9,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { fetchSuccess } from "../redux/videoSlice";
+import { dislike, fetchSuccess, like } from "../redux/videoSlice";
 import { format } from "timeago.js";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown";
+import { subscription } from "../redux/userSlice";
 
 const Container = styled.div`
   display: flex;
@@ -113,10 +116,8 @@ const Content = styled.div`
 
 const Video = () => {
   const { currentUser } = useSelector((state) => state.user);
+  const { currentVideo } = useSelector((state) => state.video);
   const dispatch = useDispatch();
-
-  /*   console.log("USER", currentUser);
-  console.log("VIDEO", currentVideo); */
 
   const path = useLocation().pathname.split("/")[2];
 
@@ -130,11 +131,30 @@ const Video = () => {
           `/users/find/${videoRes.data.userId}`
         );
         setChannel(channelRes.data);
+
         dispatch(fetchSuccess(videoRes.data));
       } catch (error) {}
     };
     fetchData();
-  }, [path, dispatch]);
+  }, [dispatch, path]);
+
+  const handleLike = async () => {
+    await axios.put(`/users/like/${currentVideo._id}`);
+    dispatch(like(currentUser._id));
+  };
+
+  const handleDislike = async () => {
+    await axios.put(`/users/dislike/${currentVideo._id}`);
+    dispatch(dislike(currentUser._id));
+  };
+
+  const handleSub = async () => {
+    currentUser.subscribedUsers.includes(channel._id)
+      ? await axios.put(`/users/unsub/${channel._id}`)
+      : await axios.put(`/users/sub/${channel._id}`);
+      
+    dispatch(subscription(channel._id));
+  };
 
   return (
     <Container>
@@ -150,16 +170,26 @@ const Video = () => {
             allowFullScreen
           ></iframe>
         </VideoWrapper>
-        <Title>title</Title>
+        <Title>{currentVideo?.title}</Title>
         <Details>
-          <Info>555 views / 12 Jul 2022</Info>
+          <Info>
+            {currentVideo?.views} views / {format(currentVideo?.createdAt)}
+          </Info>
           <Buttons>
-            <Button>
-              <ThumbUpOutlinedIcon />
-              12
+            <Button onClick={handleLike}>
+              {currentVideo?.likes?.includes(currentUser._id) ? (
+                <ThumbUpIcon />
+              ) : (
+                <ThumbUpOutlinedIcon />
+              )}
+              {currentVideo?.likes?.length}
             </Button>
-            <Button>
-              <ThumbDownOffAltOutlinedIcon />
+            <Button onClick={handleDislike}>
+              {currentVideo?.dislikes?.includes(currentUser._id) ? (
+                <ThumbDownIcon />
+              ) : (
+                <ThumbDownOffAltOutlinedIcon />
+              )}
               Dislike
             </Button>
             <Button>
@@ -179,14 +209,14 @@ const Video = () => {
             <ChannelDetail>
               <ChannelName>{channel.name}</ChannelName>
               <ChannelCounter>{channel.subscribers} subscribers</ChannelCounter>
-              <Description>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Officiis rem numquam ullam veniam quisquam ipsa odit non qui
-                consectetur ducimus.
-              </Description>
+              <Description>{currentVideo?.desc}</Description>
             </ChannelDetail>
           </ChannelInfo>
-          <Subscribe>SUBSCRIBE</Subscribe>
+          <Subscribe onClick={handleSub}>
+            {currentUser.subscribedUsers?.includes(channel._id)
+              ? "SUBSCRIBED"
+              : "SUBSCRIBE"}
+          </Subscribe>
         </Channel>
         <Hr />
         <Comments />
