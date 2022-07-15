@@ -5,6 +5,12 @@ import ReplyOutlinedIcon from "@mui/icons-material/ReplyOutlined";
 import AddTaskOutlinedIcon from "@mui/icons-material/AddTaskOutlined";
 import Comments from "../components/Comments";
 import Card from "../components/Card";
+import { useSelector, useDispatch } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { fetchSuccess } from "../redux/videoSlice";
+import { format } from "timeago.js";
 
 const Container = styled.div`
   display: flex;
@@ -66,12 +72,12 @@ const ChannelInfo = styled.div`
 const Subscribe = styled.button`
   background-color: #cc1a00;
   font-weight: 500;
-  color:white;
-  border:none;
-  border-radius:3px;
-  height:max-content;
-  cursor:pointer;
-  padding:10px 20px;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  height: max-content;
+  cursor: pointer;
+  padding: 10px 20px;
 `;
 
 const Image = styled.img`
@@ -95,7 +101,7 @@ const ChannelCounter = styled.span`
   margin-bottom: 20px;
   color: ${({ theme }) => theme.textSoft};
   font-size: 12px;
-`;  
+`;
 
 const Description = styled.p`
   font-size: 14px;
@@ -106,6 +112,30 @@ const Content = styled.div`
 `;
 
 const Video = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  /*   console.log("USER", currentUser);
+  console.log("VIDEO", currentVideo); */
+
+  const path = useLocation().pathname.split("/")[2];
+
+  const [channel, setChannel] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const videoRes = await axios.get(`/videos/find/${path}`);
+        const channelRes = await axios.get(
+          `/users/find/${videoRes.data.userId}`
+        );
+        setChannel(channelRes.data);
+        dispatch(fetchSuccess(videoRes.data));
+      } catch (error) {}
+    };
+    fetchData();
+  }, [path, dispatch]);
+
   return (
     <Container>
       <Content>
@@ -115,18 +145,18 @@ const Video = () => {
             height="720"
             src="https://www.youtube.com/embed/k3Vfj-e1Ma4"
             title="YouTube video player"
-            frameborder="0"
+            frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
+            allowFullScreen
           ></iframe>
         </VideoWrapper>
-        <Title>Test Video</Title>
+        <Title>title</Title>
         <Details>
-          <Info>32233232 views / 11 Jul 2022</Info>
+          <Info>555 views / 12 Jul 2022</Info>
           <Buttons>
             <Button>
               <ThumbUpOutlinedIcon />
-              123
+              12
             </Button>
             <Button>
               <ThumbDownOffAltOutlinedIcon />
@@ -145,40 +175,36 @@ const Video = () => {
         <Hr />
         <Channel>
           <ChannelInfo>
-            <Image src="https://yt3.ggpht.com/yti/APfAmoE-Q0ZLJ4vk3vqmV4Kwp0sbrjxLyB8Q4ZgNsiRH=s88-c-k-c0x00ffffff-no-rj-mo" />
+            <Image src={channel.img} />
             <ChannelDetail>
-              <ChannelName>Test Channel</ChannelName>
-              <ChannelCounter>200k subscribers</ChannelCounter>
+              <ChannelName>{channel.name}</ChannelName>
+              <ChannelCounter>{channel.subscribers} subscribers</ChannelCounter>
               <Description>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ab
-                placeat aperiam quia perferendis. Praesentium, totam quaerat,
-                molestiae, quas architecto eligendi ipsam aperiam doloribus
-                laudantium nostrum sint optio quia voluptatum porro amet eum
-                officiis? Autem, ex? Iusto adipisci itaque possimus magnam ad
-                aspernatur eligendi, sapiente nesciunt nam quas corrupti eum
-                voluptates!
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Officiis rem numquam ullam veniam quisquam ipsa odit non qui
+                consectetur ducimus.
               </Description>
             </ChannelDetail>
           </ChannelInfo>
           <Subscribe>SUBSCRIBE</Subscribe>
         </Channel>
-      <Hr/>
-        <Comments/>
+        <Hr />
+        <Comments />
       </Content>
-      <Recommendation>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/>
-        <Card type="sm"/> 
-      </Recommendation>
+      {/* <Recommendation>
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+        <Card type="sm" />
+      </Recommendation> */}
     </Container>
   );
 };
